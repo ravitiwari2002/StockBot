@@ -5,8 +5,8 @@ StockBot is a Python-based chatbot designed to provide quick and convenient info
 ## Features
 
 1. **get_stock_price**: Retrieve the current stock price for a specified company.
-2. **calculate_SMA**: Calculate the 50-day simple moving average for a given stock.
-3. **calculate_EMA**: Calculate the 26-day exponential moving average for a specified stock.
+2. **calculate_SMA**: Calculate the simple moving average for a given stock.
+3. **calculate_EMA**: Calculate the exponential moving average for a specified stock.
 4. **calculate_RSI**: Calculate the relative strength index for a particular stock.
 5. **calculate_MACD**: Calculate the moving average convergence divergence for a chosen stock.
 6. **plot_stock_price**: Generate a plot displaying the stock price trend over the last year.
