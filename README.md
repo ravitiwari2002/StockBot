@@ -22,3 +22,13 @@ StockBot may not cover all stocks, and the information provided may not be real-
 ## Disclaimer
 
 This project is for educational and informational purposes only. It does not constitute financial advice. Use the information provided by StockBot responsibly and consider consulting with a financial professional for personalized guidance.
+
+## License
+
+    Copyright [2023] [Ravi Tiwari]
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
