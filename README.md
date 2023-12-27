@@ -14,6 +14,7 @@ StockBot is a Python-based chatbot designed to provide quick and convenient info
 8. **average_volume**: Obtain the average trading volume for a specific stock over the last month.
 9. **get_dividend_info**: Retrieve dividend information for a given stock.
 10. **get_stock_news**: Fetch the latest news headlines related to a particular stock.
+11. **calculate_daily_returns**: Get the daily return for a given stock.
 
 ## Note
 
