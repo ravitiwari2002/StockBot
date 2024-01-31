@@ -17,6 +17,11 @@ StockBot is a Python-based chatbot designed to provide quick and convenient info
 11. **calculate_daily_returns**: Get the daily return for a given stock.
 
 
+
+https://github.com/ravitiwari2002/StockBot/assets/81186121/df4240d7-bf9d-4ae7-b2de-af8ad59ff984
+
+
+
 ## Note
 
 StockBot may not cover all stocks, and the information provided may not be real-time. It's designed to offer quick insights based on historical and publicly available data.
