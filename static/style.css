@@ -1,0 +1,467 @@
+
+.profiles-gate-container {
+    background: #141414;
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    text-align: center;
+    top: 0;
+    z-index: 0
+}
+
+.profiles-gate-container .centered-div {
+    align-items: center;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 100
+}
+
+.profiles-gate-container .centered-div.list-profiles-container:not(.js-transition-node) {
+    animation: animateProfileGate .45s forwards
+}
+
+
+.profiles-gate-container ul {
+    padding: 0
+}
+
+.profiles-gate-container .avatar-container {
+    padding: 5px
+}
+
+.profiles-gate-container .profile-icon {
+    background-color: #333;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border: none;
+    border-radius: 4px;
+    box-sizing: border-box;
+    height: 10vw;
+    max-height: 200px;
+    max-width: 200px;
+    min-height: 84px;
+    min-width: 84px;
+    position: relative;
+    text-decoration: none;
+    width: 10vw
+}
+
+.profiles-gate-container .profile-icon:after {
+    border: .3em solid transparent;
+    border-radius: 4px;
+    bottom: 0;
+    content: "";
+    display: block;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0
+}
+
+
+
+.profiles-gate-container .profile-name {
+    color: grey;
+    display: block;
+    font-size: 1.3vw;
+    line-height: 1.2em;
+    margin: .6em 0;
+    min-height: 1.8em;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+@media screen and (min-width:1666px) {
+    .profiles-gate-container .profile-name {
+        font-size: 24px
+    }
+}
+
+@media screen and (max-width:800px) {
+    .profiles-gate-container .profile-name {
+        font-size: 12px
+    }
+}
+
+.profiles-gate-container li {
+    display: inline-block;
+    position: relative;
+    vertical-align: top
+}
+
+.profiles-gate-container li.profile {
+    max-width: 200px;
+    min-width: 84px;
+    width: 10vw
+}
+
+.profiles-gate-container li.profile:not(:last-child) {
+    margin: 0 2vw 0 0
+}
+
+.profiles-gate-container li.profile .svg-icon-profile-lock {
+    color: #666;
+    height: 20px;
+    width: 20px
+}
+
+.profiles-gate-container li a {
+    text-decoration: none
+}
+
+
+.profiles-gate-container li a.focused .profile-icon,
+.profiles-gate-container li a.focused .profile-icon:after,
+.profiles-gate-container li a:focus .profile-icon,
+.profiles-gate-container li a:focus .profile-icon:after,
+.profiles-gate-container li a:hover .profile-icon,
+.profiles-gate-container li a:hover .profile-icon:after {
+    border-color: #e5e5e5
+}
+
+.profiles-gate-container li a.focused .profile-name,
+.profiles-gate-container li a:focus .profile-name,
+.profiles-gate-container li a:hover .profile-name {
+    color: #e5e5e5
+}
+
+.profiles-gate-container li a.focused .addProfileIcon,
+.profiles-gate-container li a:focus .addProfileIcon,
+.profiles-gate-container li a:hover .addProfileIcon {
+    background-color: #e5e5e5;
+    border-radius: 4px
+}
+
+.profiles-gate-container .addProfileIcon {
+    align-items: center;
+    color: grey;
+    display: flex;
+    font-size: 5vw;
+    height: 10vw;
+    justify-content: center;
+    max-height: 200px;
+    max-width: 200px;
+    min-height: 84px;
+    min-width: 84px;
+    text-align: center;
+    text-decoration: none;
+    width: 10vw
+}
+
+@media screen and (min-width:1666px) {
+    .profiles-gate-container .addProfileIcon {
+        font-size: 100px
+    }
+}
+
+@media screen and (max-width:865px) {
+    .profiles-gate-container .addProfileIcon {
+        font-size: 50px
+    }
+}
+
+.extended-diacritics-language .profiles-gate-container .profile-name {
+    line-height: 1.5
+}
+
+.akira-header .account-menu-item.exit-button .account-dropdown-button .profile-name,
+.pinning-header .account-menu-item.exit-button .account-dropdown-button .profile-name {
+    max-width: 140px
+}
+
+.akira-header .account-dropdown-button .profile-link,
+.pinning-header .account-dropdown-button .profile-link {
+    align-items: center;
+    display: flex;
+    position: relative
+}
+
+.akira-header .account-dropdown-button .profile-name,
+.pinning-header .account-dropdown-button .profile-name {
+    font-weight: 700;
+    margin-left: 6px;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre
+}
+
+@media screen and (max-width:950px) {
+
+    .akira-header .account-dropdown-button .profile-name,
+    .pinning-header .account-dropdown-button .profile-name {
+        display: none
+    }
+}
+.akira-header .account-drop-down .profiles,
+.pinning-header .account-drop-down .profiles {
+    height: auto;
+    overflow: hidden;
+    padding: 10px 0 5px
+}
+
+.akira-header .account-drop-down .profiles .sub-menu-item,
+.pinning-header .account-drop-down .profiles .sub-menu-item {
+    line-height: 32px
+}
+
+.akira-header .account-drop-down .profiles .sub-menu-item>div,
+.pinning-header .account-drop-down .profiles .sub-menu-item>div {
+    align-items: center;
+    display: flex
+}
+
+.akira-header .account-drop-down .profiles .profile-link,
+.pinning-header .account-drop-down .profiles .profile-link {
+    cursor: pointer
+}
+
+.akira-header .account-drop-down .profiles .profile-icon,
+.pinning-header .account-drop-down .profiles .profile-icon {
+    border-radius: 4px;
+    height: 32px;
+    margin-right: 10px;
+    vertical-align: middle;
+    width: 32px
+}
+
+.akira-header .account-drop-down .profiles .profile-name,
+.pinning-header .account-drop-down .profiles .profile-name {
+    display: inline-block;
+    line-height: 18px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: pre;
+    width: 100px
+}
+
+@media screen and (max-width:950px) {
+
+    .akira-header .account-drop-down .profiles .profile-name,
+    .pinning-header .account-drop-down .profiles .profile-name {
+        display: inline-block
+    }
+}
+
+@media screen and (max-width:800px) {
+    .profile-pin-prompt-label {
+        font-size: 30px
+    }
+}
+
+@-webkit-keyframes animateProfileGate {
+    0% {
+        opacity: 0;
+        transform: scale(1.1)
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1)
+    }
+}
+
+@keyframes animateProfileGate {
+    0% {
+        opacity: 0;
+        transform: scale(1.1)
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1)
+    }
+}
+
+
+.profile-button {
+    background-color: transparent;
+    border: 1px solid grey;
+    color: grey;
+    cursor: pointer;
+    display: block;
+    font-size: 1.2vw;
+    letter-spacing: 2px;
+    margin: 2em 0 1em;
+    padding: .5em 1.5em
+}
+
+@media screen and (max-width:800px) {
+    .profile-button {
+        font-size: 13px
+    }
+}
+
+@media screen and (max-width:865px) {
+    .loading-profile-wrapper .akira-spinner {
+        font-size: 249.6px;
+        margin-left: -124.8px;
+        margin-top: -124.8px
+    }
+}
+
+@media screen and (min-width:1666px) {
+    .loading-profile-wrapper .akira-spinner {
+        font-size: 480px;
+        margin-left: -240px;
+        margin-top: -240px
+    }
+}
+
+.loading-profile-wrapper .errorLoading {
+    opacity: 0;
+    transition: opacity .2s linear
+}
+
+.profile-load-error {
+    color: grey;
+    font-size: 1.4vw;
+    margin-top: 4vw;
+    opacity: 0;
+    transition: opacity .2s cubic-bezier(.5, 0, .1, 1)
+}
+
+.profile-load-error.show-error {
+    opacity: 1
+}
+
+@media screen and (max-width:865px) {
+    .profile-load-error {
+        font-size: 14px;
+        margin-top: 30px
+    }
+}
+
+@media screen and (min-width:1666px) {
+    .profile-load-error {
+        margin-top: 50px
+    }
+}
+
+.profile-actions-container {
+    position: relative;
+    text-align: left
+}
+
+.profile-actions-container h1,
+.profile-actions-container h2,
+.profile-actions-container h3 {
+    font-weight: 400
+}
+
+.profile-actions-container h1 {
+    font-size: 4vw;
+    margin: 0
+}
+
+@media screen and (max-width:800px) {
+    .profile-actions-container h1 {
+        font-size: 40px
+    }
+}
+
+.profile-actions-container h2 {
+    color: #666;
+    font-size: 1.3vw
+}
+
+@media screen and (max-width:800px) {
+    .profile-actions-container h2 {
+        font-size: 13px
+    }
+}
+
+.profile-actions-container h3 {
+    color: #ccc;
+    font-size: 1.2vw;
+    margin-bottom: .4em
+}
+
+.profile-actions-container h2.profile-entry-header {
+    color: #ccc;
+    margin: 0 0 7px
+}
+
+
+@media screen and (max-width:800px) {
+    .profile-entry input[type=text] {
+        font-size: 13px
+    }
+}
+
+
+
+.profile-entry input[type=checkbox]+label {
+    border: 1px solid #333;
+    border-radius: 0;
+    display: inline-block;
+    font-size: .8vw;
+    height: 2.5em;
+    margin-right: .5em;
+    position: relative;
+    width: 2.5em
+}
+
+@media screen and (max-width:800px) {
+    .profile-entry input[type=checkbox]+label {
+        font-size: 7px
+    }
+}
+
+
+
+@font-face {
+    font-display: optional;
+    font-family: NKufi;
+    font-weight: 400;
+    src: url(https://assets.nflxext.com/ffe/siteui/fonts/kufi/v4/HandsetSansKufiArabic-Regular.woff2) format("woff2"), url(https://assets.nflxext.com/ffe/siteui/fonts/kufi/v4/HandsetSansKufiArabic-Regular.woff) format("woff")
+}
+
+@font-face {
+    font-display: optional;
+    font-family: NKufi;
+    font-weight: 700;
+    src: url(https://assets.nflxext.com/ffe/siteui/fonts/kufi/v4/HandsetSansKufiArabic-Bold.woff2) format("woff2"), url(https://assets.nflxext.com/ffe/siteui/fonts/kufi/v4/HandsetSansKufiArabic-Bold.woff) format("woff")
+}
+
+.nkufi-font-loaded {
+    font-family: NKufi, Helvetica Neue, Helvetica, Arial, sans-serif
+}
+
+@font-face {
+    font-display: optional;
+    font-family: GraphikTH;
+    font-weight: 400;
+    src: url(https://assets.nflxext.com/ffe/siteui/fonts/graphik/v2/GraphikTH-Medium.woff2) format("woff2"), url(https://assets.nflxext.com/ffe/siteui/fonts/graphik/v2/GraphikTH-Medium.woff) format("woff")
+}
+
+@font-face {
+    font-display: optional;
+    font-family: GraphikTH;
+    font-weight: 700;
+    src: url(https://assets.nflxext.com/ffe/siteui/fonts/graphik/v2/GraphikTH-Bold.woff2) format("woff2"), url(https://assets.nflxext.com/ffe/siteui/fonts/graphik/v2/GraphikTH-Bold.woff) format("woff")
+}
+
+.graphik-font-loaded {
+    font-family: GraphikTH, Helvetica Neue, Helvetica, Arial, sans-serif
+}
+body,
+html {
+    -webkit-font-smoothing: antialiased;
+    background: #141414;
+    color: #fff;
+    cursor: default;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 10px;
+    line-height: 1.2;
+    user-select: none
+}
+
