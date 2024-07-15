@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title data-rh="true">StockBot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google" value="notranslate">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="profiles-gate-container">
+        <div class="centered-div list-profiles-container">
+            <h1>Please select an option</h1>
+            <ul>
+                <li class="profile">
+                    <div>
+                        <a href="{{ url_for('run_chatbot') }}" data-uia="action-select-profile+primary">
+                            <div class="avatar-wrapper">
+                                <div class="profile-icon"
+                                    style="background-image:url({{ url_for('static', filename='bot.png')}})">
+                                </div>
+                            </div><span class="profile-name">Stock Chatbot</span>
+                        </a>
+                    </div>
+                </li>
+
+                <li class="profile">
+                    <div>
+                        <a href="{{ url_for('run_forecast') }}" data-uia="action-select-profile+secondary">
+                            <div class="avatar-wrapper">
+                                <div class="profile-icon"
+                                    style="background-image:url({{ url_for('static',filename='forecast.png')}})">
+                                </div>
+                            </div><span class="profile-name">Stock Forecast</span>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
