@@ -5,12 +5,18 @@ import numpy as np
 from functions import *
 import os
 
+from datetime import date
+import yfinance as yf
+from prophet import Prophet
+from prophet.plot import plot_plotly
+from plotly import graph_objs as go
+
 current_directory = os.getcwd()
 api_relative_path = 'API_KEY'
 functions_relative_path = 'function_config.json'
 
 api_key_path = os.path.join(current_directory, api_relative_path)
-MODEL_NAME = 'gpt-3.5-turbo-0613'
+MODEL_NAME = 'gpt-3.5-turbo-0125'
 
 with open(api_key_path, 'r') as f:
     openai.api_key = f.read()
@@ -166,7 +172,7 @@ with col1:
                     st.session_state['messages'].append({'role': 'assistant', 'content': response_message})
         except Exception as e:
             st.error("Oops! Something went wrong. Please try a different query or check your input.")
-            # st.error(f"An error occurred: {e}")
+            st.error(f"An error occurred: {e}")
 
 # Display FAQ in col2
 with col2:
