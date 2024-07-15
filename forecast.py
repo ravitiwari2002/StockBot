@@ -1,9 +1,9 @@
-import streamlit as st
-import yfinance as yf
-from prophet.plot import plot_plotly
-from plotly import graph_objs as go
 from datetime import date
 from prophet import Prophet
+from prophet.plot import plot_plotly
+from plotly import graph_objs as go
+import streamlit as st
+import yfinance as yf
 
 START = "2000-01-01"
 TODAY = date.today().strftime("%Y-%m-%d")
