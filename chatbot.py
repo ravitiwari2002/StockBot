@@ -5,11 +5,12 @@ import numpy as np
 from functions import *
 import os
 
-from datetime import date
+from datetime import date, datetime
 import yfinance as yf
 from prophet import Prophet
 from prophet.plot import plot_plotly
 from plotly import graph_objs as go
+import pandas as pd
 
 current_directory = os.getcwd()
 api_relative_path = 'API_KEY'
@@ -78,10 +79,8 @@ col1, col2 = st.columns(2)
 if 'messages' not in st.session_state:
     st.session_state['messages'] = []
 
-with col1:
-    st.title('Stock Chatbot Assistant')
-    user_input = st.text_area("ChatBot can make mistakes. Consider checking important information.", height=100,
-                              placeholder='Ask me about Stocks')
+def submit():
+    user_input = st.session_state.user_input
     if user_input:
         try:
             # Split user input into separate questions
@@ -173,6 +172,18 @@ with col1:
         except Exception as e:
             st.error("Oops! Something went wrong. Please try a different query or check your input.")
             st.error(f"An error occurred: {e}")
+    # Clear the user input text area
+    st.session_state.user_input = ""
+
+with col1:
+    st.title('Stock Chatbot Assistant')
+    st.text_area(
+        "ChatBot can make mistakes. Consider checking important information.",
+        height=100,
+        placeholder='Ask me about Stocks',
+        key="user_input",
+        on_change=submit
+    )
 
 # Display FAQ in col2
 with col2:
