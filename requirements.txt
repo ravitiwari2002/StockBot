@@ -93,3 +93,7 @@ wheel==0.43.0
 win-inet-pton @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/win_inet_pton_1699472992992/work
 yarl==1.9.4
 yfinance==0.2.40
+
+flask~=3.0.3
+numpy~=1.26.4
+pandas~=2.2.2
