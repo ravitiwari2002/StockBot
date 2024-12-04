@@ -1,41 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title data-rh="true">StockBot</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="google" value="notranslate">
-    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <style>
+        body {
+            background-color: #000;  /* Black background */
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        .title {
+            font-size: 2em;
+            margin-bottom: 30px;
+        }
+        .options {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+        .option {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-decoration: none;
+            color: white;
+        }
+        .option img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+        .option:hover img {
+            transform: scale(1.1);  /* Zoom effect on hover */
+        }
+        .option-text {
+            margin-top: 10px;
+            font-size: 1.2em;
+            transition: font-weight 0.2s, color 0.2s;
+        }
+        .option:hover .option-text {
+            color: #ff4081;  /* Change text color on hover */
+            font-weight: bold;  /* Bold text on hover */
+        }
+    </style>
 </head>
 <body>
-    <div class="profiles-gate-container">
-        <div class="centered-div list-profiles-container">
-            <h1>Please select an option</h1>
-            <ul>
-                <li class="profile">
-                    <div>
-                        <a href="{{ url_for('run_chatbot') }}" data-uia="action-select-profile+primary">
-                            <div class="avatar-wrapper">
-                                <div class="profile-icon"
-                                    style="background-image:url({{ url_for('static', filename='bot.png')}})">
-                                </div>
-                            </div><span class="profile-name">Stock Chatbot</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="profile">
-                    <div>
-                        <a href="{{ url_for('run_forecast') }}" data-uia="action-select-profile+secondary">
-                            <div class="avatar-wrapper">
-                                <div class="profile-icon"
-                                    style="background-image:url({{ url_for('static',filename='forecast.png')}})">
-                                </div>
-                            </div><span class="profile-name">Stock Forecast</span>
-                        </a>
-                    </div>
-                </li>
-            </ul>
+    <div class="container">
+        <div class="title">What would you like to explore?</div>
+        <div class="options">
+            <a href="/run_chatbot" class="option">
+                <img src="{{ url_for('static', filename='chatbot.png') }}" alt="Stock Bot">
+                <div class="option-text">Stock Bot</div>
+            </a>
+            <a href="/run_forecast" class="option">
+                <img src="{{ url_for('static', filename='forecast.png') }}" alt="Stock Forecasting">
+                <div class="option-text">Stock Forecasting</div>
+            </a>
         </div>
     </div>
 </body>
