@@ -5,6 +5,7 @@ from plotly import graph_objs as go
 import streamlit as st
 import yfinance as yf
 
+
 START = "2000-01-01"
 TODAY = date.today().strftime("%Y-%m-%d")
 
