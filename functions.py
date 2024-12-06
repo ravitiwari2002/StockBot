@@ -78,3 +78,5 @@ def calculate_daily_returns(ticker):
     data = yf.download(ticker, start=start, end=end, progress=False)
     data['Daily Return'] = data['Adj Close'].pct_change()
     return {k.strftime('%Y-%m-%d'): (v if pd.notnull(v) else "NaN") for k, v in data['Daily Return'].to_dict().items()}
+
+
