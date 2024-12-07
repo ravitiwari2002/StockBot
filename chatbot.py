@@ -123,46 +123,6 @@ if 'messages' not in st.session_state:
 with col1:
     st.markdown("## 💬 Stock Chatbot Assistant")
 
-    # Custom CSS to style the text area and button
-    st.markdown(
-        """
-        <style>
-        .custom-text-area {
-            width: 100%;
-            padding: 10px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            background-color: #f7f9fc;
-            color: #333;
-            resize: none;
-            outline: none; /* Removes focus outline */
-        }
-        .custom-button {
-            margin-top: 10px;
-            padding: 10px 20px; /* Adjust padding for comfortable size */
-            font-size: 16px;
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .custom-button:hover {
-            background: linear-gradient(to right, #2575fc, #6a11cb);
-            transform: scale(1.05);
-        }
-        .stTextInput > div {
-            display: none !important; /* Hide the default outer container */
-        }
-        .no-ctrl-enter-hint textarea {
-            caret-color: auto;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
     # Input layout
     user_input = st.text_area(
         "Send",
@@ -180,6 +140,7 @@ with col1:
     # Process input when the button is clicked
     if submit_button and user_input:
         try:
+            # Split user input into separate questions
             user_questions = user_input.split('\n')
             for user_question in user_questions:
                 st.session_state['messages'].append({'role': 'user', 'content': user_question})
@@ -193,31 +154,81 @@ with col1:
 
                 response_message = response['choices'][0]['message']
 
-                if isinstance(response_message, dict) and response_message.get('function_call'):
-                    function_name = response_message['function_call']['name']
-                    function_args = json.loads(response_message['function_call']['arguments'])
-                    args_dict = {k: function_args.get(k) for k in function_args}
+                if isinstance(response_message, dict):
+                    if response_message.get('function_call'):
+                        function_name = response_message['function_call']['name']
+                        function_args = json.loads(response_message['function_call']['arguments'])
+                        # Check if the function requires a 'ticker' argument
+                        if function_name in ['get_stock_price', 'calculate_RSI', 'calculate_MACD', 'plot_stock_price',
+                                             'get_stock_news', 'calculate_daily_returns']:
+                            args_dict = {'ticker': function_args.get('ticker')}
+                        elif function_name in ['calculate_SMA', 'calculate_EMA']:
+                            args_dict = {'ticker': function_args.get('ticker'), 'window': function_args.get('window')}
+                        elif function_name == 'compare_stock_prices':
+                            args_dict = {'ticker1': function_args.get('ticker1'),
+                                         'ticker2': function_args.get('ticker2'),
+                                         'period': function_args.get('period')}
+                        elif function_name == 'average_volume':
+                            args_dict = {'ticker': function_args.get('ticker'), 'period': function_args.get('period')}
+                        elif function_name == 'get_dividend_info':
+                            args_dict = {'ticker': function_args.get('ticker')}
 
-                    function_to_call = available_functions[function_name]
-                    function_response = function_to_call(**args_dict)
+                        function_to_call = available_functions[function_name]
+                        function_response = function_to_call(**args_dict)
 
-                    if function_name == 'plot_stock_price':
-                        st.image('stock.png')
-                    elif function_name == 'get_stock_news':
-                        st.markdown("### 📰 Recent News Headlines")
-                        for article in function_response:
-                            st.markdown(f"**Title**: {article['title']}")
-                            st.markdown(f"**Publisher**: {article['publisher']}")
-                            st.markdown(f"[Read More]({article['link']})")
-                            st.write("---")
+                        if function_name == 'plot_stock_price':
+                            st.image('stock.png')
+
+                        elif function_name == 'get_stock_news':
+                            st.text("Recent News Headlines:")
+                            for article in function_response:
+                                st.write(f"Title: {article['title']}")
+                                st.write(f"Publisher: {article['publisher']}")
+                                st.write(f"Link: {article['link']}")
+                                publish_time = datetime.utcfromtimestamp(article['providerPublishTime']).strftime(
+                                    '%Y-%m-%d %H:%M:%S')
+                                st.write(f"Provider Publish Time: {publish_time}")
+                                st.write(f"Type: {article['type']}")
+                                if 'thumbnail' in article and 'resolutions' in article['thumbnail'] and \
+                                        article['thumbnail']['resolutions']:
+                                    st.image(article['thumbnail']['resolutions'][0]['url'], width=200)
+                                individual_tickers = [ticker for ticker in article['relatedTickers'] if
+                                                      not (ticker.startswith('^') or ticker.endswith('=F'))]
+                                st.write("Related Tickers: ", ", ".join(individual_tickers))
+                                st.write("\n---\n")
+
+                        elif function_name == 'calculate_daily_returns':
+                            daily_returns = pd.Series(
+                                {k: (float(v) if v != "NaN" else np.nan) for k, v in function_response.items()})
+                            st.write(daily_returns)
+
+                        else:
+                            st.session_state['messages'].append(response_message)
+                            st.session_state['messages'].append(
+                                {
+                                    'role': 'function',
+                                    'name': function_name,
+                                    'content': function_response
+                                }
+                            )
+                            second_response = openai.ChatCompletion.create(
+                                model=MODEL_NAME,
+                                messages=st.session_state['messages']
+                            )
+                            st.write(second_response['choices'][0]['message']['content'])
+                            st.session_state['messages'].append(
+                                {'role': 'assistant', 'content': second_response['choices'][0]['message']['content']})
+
                     else:
-                        st.write(function_response)
+                        st.write(response_message['content'])
+                        st.session_state['messages'].append(
+                            {'role': 'assistant', 'content': response_message['content']})
                 else:
-                    st.write(response_message.get('content', 'No content returned.'))
-
+                    st.write(response_message)
+                    st.session_state['messages'].append({'role': 'assistant', 'content': response_message})
         except Exception as e:
             st.error("Oops! Something went wrong. Please try a different query or check your input.")
-            st.error(f"Error: {e}")
+            st.error(f"An error occurred: {e}")
 
 # FAQ Section
 with col2:
@@ -225,3 +236,14 @@ with col2:
     for question, answer in faq_questions:
         with st.expander(f"Q: {question}"):
             st.info(answer)
+
+# Adjust layout colors
+st.markdown(
+    """
+    <style>
+        .st-df div { color: #333; }
+        .st-df td, .st-df th { border: 1px solid #ddd !important; }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
