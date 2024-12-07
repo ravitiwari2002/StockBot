@@ -3,70 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
-    <style>
-        body {
-            background-color: #000;  /* Black background */
-            color: #fff;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-        .container {
-            text-align: center;
-        }
-        .title {
-            font-size: 2em;
-            margin-bottom: 30px;
-        }
-        .options {
-            display: flex;
-            justify-content: center;
-            gap: 50px;
-            flex-wrap: wrap;
-        }
-        .option {
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s;
-            text-decoration: none;
-            color: white;
-        }
-        .option img {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-            transition: transform 0.3s;
-        }
-        .option:hover img {
-            transform: scale(1.1);  /* Zoom effect on hover */
-        }
-        .option-text {
-            margin-top: 10px;
-            font-size: 1.2em;
-            transition: font-weight 0.2s, color 0.2s;
-        }
-        .option:hover .option-text {
-            color: #ff4081;  /* Change text color on hover */
-            font-weight: bold;  /* Bold text on hover */
-        }
-    </style>
+    <title>Stock Bot</title>
+    <!-- Link to the external CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 <body>
+    <div class="bg-animation">
+        <div id="stars"></div>
+        <div id="stars2"></div>
+        <div id="stars3"></div>
+        <div id="stars4"></div>
+    </div>
+
     <div class="container">
         <div class="title">What would you like to explore?</div>
         <div class="options">
             <a href="/run_chatbot" class="option">
-                <img src="{{ url_for('static', filename='chatbot.png') }}" alt="Stock Bot">
-                <div class="option-text">Stock Bot</div>
+                <img src="{{ url_for('static', filename='chatbot.png') }}" alt="Chatbot Image">
+                <div class="option-text">Chat Bot</div>
             </a>
             <a href="/run_forecast" class="option">
-                <img src="{{ url_for('static', filename='forecast.png') }}" alt="Stock Forecasting">
-                <div class="option-text">Stock Forecasting</div>
+                <img src="{{ url_for('static', filename='forecast.png') }}" alt="Forecast Image">
+                <div class="option-text">Stock Prophet</div>
             </a>
         </div>
     </div>
