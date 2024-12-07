@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import yfinance as yf
 from datetime import datetime, timedelta
 import pandas as pd
-
+import numpy as np
 
 def get_stock_price(ticker):
     return str(yf.Ticker(ticker).history(period='1y').iloc[-1].Close)
@@ -78,5 +78,3 @@ def calculate_daily_returns(ticker):
     data = yf.download(ticker, start=start, end=end, progress=False)
     data['Daily Return'] = data['Adj Close'].pct_change()
     return {k.strftime('%Y-%m-%d'): (v if pd.notnull(v) else "NaN") for k, v in data['Daily Return'].to_dict().items()}
-
-
