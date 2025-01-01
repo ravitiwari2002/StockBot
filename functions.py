@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import yfinance as yf
 from datetime import datetime, timedelta
 import pandas as pd
+import numpy as np
 
 def get_stock_price(ticker):
     return str(yf.Ticker(ticker).history(period='1y').iloc[-1].Close)
