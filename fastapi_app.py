@@ -85,44 +85,6 @@ async def chat(request: Request):
 @app.get("/api/forecast")
 async def forecast(symbol: str, years: int = 1, column: str = "Close"):
     data = yf.Ticker(symbol).history(period="max")
-    if data.empty:
-        return {"error": "No data found"}
-
-    data.index = data.index.tz_localize(None)
-    data.reset_index(inplace=True)
-    data["Date"] = pd.to_datetime(data["Date"]).dt.tz_localize(None)
-
-    # Technical indicators
-    data["MA_20"] = data[column].rolling(window=20).mean()
-    data["MA_50"] = data[column].rolling(window=50).mean()
-    data["MA_200"] = data[column].rolling(window=200).mean()
-
-    data["BB_Middle"] = data[column].rolling(window=20).mean()
-    bb_std = data[column].rolling(window=20).std()
-    data["BB_Upper"] = data["BB_Middle"] + (bb_std * 2)
-    data["BB_Lower"] = data["BB_Middle"] - (bb_std * 2)
-
-    delta = data[column].diff()
-    gain = delta.where(delta > 0, 0).rolling(window=14).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
-    rs = gain / loss
-    data["RSI"] = 100 - (100 / (1 + rs))
-
-    ema12 = data[column].ewm(span=12, adjust=False).mean()
-    ema26 = data[column].ewm(span=26, adjust=False).mean()
-    macd_line = ema12 - ema26
-    signal_line = macd_line.ewm(span=9, adjust=False).mean()
-    data["MACD"] = macd_line
-    data["MACD_Signal"] = signal_line
-    data["MACD_Hist"] = data["MACD"] - data["MACD_Signal"]
-
-    hist_json = data.to_dict(orient="records")
-
-    prophet_df = data[["Date", column]].dropna().rename(columns={"Date": "ds", column: "y"})
-    prophet_df["ds"] = prophet_df["ds"].dt.tz_localize(None)
-
-    m = Prophet(changepoint_prior_scale=0.05, yearly_seasonality=True, weekly_seasonality=True, daily_seasonality=False, seasonality_mode="multiplicative")
-    m.fit(prophet_df)
     future = m.make_future_dataframe(periods=365 * years)
     forecast = m.predict(future)
 
