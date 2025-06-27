@@ -4,11 +4,12 @@ from prophet import Prophet
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import streamlit as st
-import yfinance as yf
 import numpy as np
+import requests
 
 START = "2000-01-01"
 TODAY = date.today().strftime("%Y-%m-%d")
+API_URL = "http://localhost:8000"
 
 def run_forecast():
     st.set_page_config(
@@ -158,46 +159,16 @@ def run_forecast():
     @st.cache_data(ttl=3600)
     def load_stock_data(ticker):
         try:
-            stock = yf.Ticker(ticker)
-            data = stock.history(start=START, end=TODAY)
-            info = stock.info
-            if data.empty:
-                return None, None
-            data.reset_index(inplace=True)
+            resp = requests.get(f"{API_URL}/data/{ticker}")
+            resp.raise_for_status()
+            payload = resp.json()
+            data = pd.DataFrame(payload["data"])
+            data["Date"] = pd.to_datetime(data["Date"])
+            info = payload["info"]
             return data, info
         except Exception as e:
             st.error(f"Error loading data for {ticker}: {e}")
             return None, None
-
-    def calculate_technical_indicators(df):
-        # MOVING AVERAGES
-        df['MA_20'] = df[data_column].rolling(window=20).mean()
-        df['MA_50'] = df[data_column].rolling(window=50).mean()
-        df['MA_200'] = df[data_column].rolling(window=200).mean()
-
-        # BOLLINGER BANDS
-        df['BB_Middle'] = df[data_column].rolling(window=20).mean()
-        bb_std = df[data_column].rolling(window=20).std()
-        df['BB_Upper'] = df['BB_Middle'] + (bb_std * 2)
-        df['BB_Lower'] = df['BB_Middle'] - (bb_std * 2)
-
-        # RSI (14‐day)
-        delta = df[data_column].diff()
-        gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-        loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
-        rs = gain / loss
-        df['RSI'] = 100 - (100 / (1 + rs))
-
-        # MACD (12‐26 EMA) + Signal (9 EMA of MACD) + Histogram
-        ema12 = df[data_column].ewm(span=12, adjust=False).mean()
-        ema26 = df[data_column].ewm(span=26, adjust=False).mean()
-        macd_line = ema12 - ema26
-        signal_line = macd_line.ewm(span=9, adjust=False).mean()
-        df['MACD'] = macd_line
-        df['MACD_Signal'] = signal_line
-        df['MACD_Hist'] = df['MACD'] - df['MACD_Signal']
-
-        return df
 
     # ─────────────────────────────────────────────────────────────────────────────
     # LOAD DATA FOR SELECTED STOCK
@@ -209,7 +180,7 @@ def run_forecast():
         st.error("❌ Unable to load stock data. Please try a different symbol.")
         st.stop()
 
-    stock_data = calculate_technical_indicators(stock_data)
+
 
     # ─────────────────────────────────────────────────────────────────────────────
     # TOP METRICS ROW
@@ -457,18 +428,18 @@ def run_forecast():
     else:
         with st.spinner("🤖 Generating AI forecast..."):
             try:
-                model = Prophet(
-                    changepoint_prior_scale=0.05,
-                    yearly_seasonality=True,
-                    weekly_seasonality=True,
-                    daily_seasonality=False,
-                    seasonality_mode='multiplicative'
+                resp = requests.get(
+                    f"{API_URL}/forecast",
+                    params={
+                        "ticker": selected_stock,
+                        "data_column": data_column,
+                        "forecast_years": forecast_years,
+                    },
                 )
-                model.fit(df_prophet)
-
-                future = model.make_future_dataframe(periods=forecast_years * 365, freq="D")
-                forecast = model.predict(future)
-
+                resp.raise_for_status()
+                forecast = pd.DataFrame(resp.json()["forecast"])
+                forecast["ds"] = pd.to_datetime(forecast["ds"])
+            
                 # METRICS CARDS
                 col1, col2, col3 = st.columns(3)
                 with col1:

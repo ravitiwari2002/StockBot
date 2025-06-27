@@ -1,7 +1,12 @@
 import json
 import openai
 import streamlit as st
-from functions import *
+import requests
+import base64
+import io
+from datetime import datetime
+import pandas as pd
+import numpy as np
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
@@ -11,24 +16,9 @@ functions_relative_path = 'function_config.json'
 with open(functions_relative_path, 'r') as file:
     config_data = json.load(file)
 
+API_URL = "http://localhost:8000"
+
 def run_chatbot():
-    available_functions = {
-        'get_stock_price': get_stock_price,
-        'calculate_SMA': calculate_SMA,
-        'calculate_EMA': calculate_EMA,
-        'calculate_RSI': calculate_RSI,
-        'calculate_MACD': calculate_MACD,
-        'plot_stock_price': plot_stock_price,
-        'compare_stock_prices': compare_stock_prices,
-        'average_volume': average_volume,
-        'get_dividend_info': get_dividend_info,
-        'get_stock_news': get_stock_news,
-        'calculate_daily_returns': calculate_daily_returns,
-        'get_pe_ratio': get_pe_ratio,
-        'get_52_week_high_low': get_52_week_high_low,
-        'get_market_cap': get_market_cap,
-        'get_next_earnings_date': get_next_earnings_date
-    }
 
     faq_questions = [
         ("What can I ask the chatbot about?", "Feel free to inquire about a wide range of stock-related information, "
@@ -175,11 +165,20 @@ def run_chatbot():
                             elif function_name == 'get_dividend_info':
                                 args_dict = {'ticker': function_args.get('ticker')}
 
-                            function_to_call = available_functions[function_name]
-                            function_response = function_to_call(**args_dict)
+                            try:
+                                resp = requests.post(
+                                    f"{API_URL}/function",
+                                    json={"name": function_name, "params": args_dict},
+                                )
+                                resp.raise_for_status()
+                                function_response = resp.json()["result"]
+                            except Exception as e:
+                                st.error(f"API error: {e}")
+                                continue
 
                             if function_name == 'plot_stock_price':
-                                st.image('stock.png')
+                                img_bytes = base64.b64decode(function_response)
+                                st.image(io.BytesIO(img_bytes))
 
                             elif function_name == 'get_stock_news':
                                 st.text("Recent News Headlines:")
