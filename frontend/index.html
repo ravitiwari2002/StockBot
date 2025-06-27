@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Bot</title>
-    <!-- Link to the external CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="bg-animation">
@@ -19,12 +17,12 @@
     <div class="container">
         <div class="title">What would you like to explore?</div>
         <div class="options">
-            <a href="http://localhost:8501" class="option">
-                <img src="{{ url_for('static', filename='chatbot.png') }}" alt="Chatbot Image">
+            <a href="/frontend/chat.html" class="option">
+                <img src="/static/chatbot.png" alt="Chatbot Image">
                 <div class="option-text">Chat Bot</div>
             </a>
-            <a href="http://localhost:8502" class="option">
-                <img src="{{ url_for('static', filename='forecast.png') }}" alt="Forecast Image">
+            <a href="/frontend/forecast.html" class="option">
+                <img src="/static/forecast.png" alt="Forecast Image">
                 <div class="option-text">Stock Prophet</div>
             </a>
         </div>

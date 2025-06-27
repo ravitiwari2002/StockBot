@@ -16,8 +16,11 @@ StockBot is a Python-based chatbot designed to provide quick and convenient info
 10. **get_stock_news**: Fetch the latest news headlines related to a particular stock.
 11. **calculate_daily_returns**: Get the daily return for a given stock.
 
+## Running the app
 
-
+1. Install dependencies with `pip install -r requirements.txt`.
+2. Start the server using `uvicorn fastapi_app:app --reload`.
+3. Open `http://localhost:8000` in your browser to access the React interface.
 https://github.com/ravitiwari2002/StockBot/assets/81186121/df4240d7-bf9d-4ae7-b2de-af8ad59ff984
 
 
