@@ -3,20 +3,22 @@ import openai
 import streamlit as st
 from functions import *
 import os
+from dotenv import load_dotenv  # <-- NEW
 
-current_directory = os.getcwd()
-api_relative_path = 'API_KEY'
+# Load environment variables from .env
+load_dotenv()
+
+# Set the OpenAI key from env
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# Use relative path to the functions config
+MODEL_NAME = 'gpt-3.5-turbo-0125'
 functions_relative_path = 'function_config.json'
 
-api_key_path = os.path.join(current_directory, api_relative_path)
-MODEL_NAME = 'gpt-3.5-turbo-0125'
-
-with open(api_key_path, 'r') as f:
-    openai.api_key = f.read().strip()
-
-config_file_path = os.path.join(current_directory, functions_relative_path)
-with open(config_file_path, 'r') as file:
+# Load function config JSON
+with open(functions_relative_path, 'r') as file:
     config_data = json.load(file)
+
 
 available_functions = {
     'get_stock_price': get_stock_price,
