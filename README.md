@@ -21,6 +21,8 @@ Built with Python, Streamlit, and OpenAI's function-calling capabilities, StockB
 - Real-time financial Q&A with OpenAI GPT
 - Uses custom Python functions via function-calling
 - Pulls live data via `yfinance`, with charts and news summaries
+- Supports fundamental metrics like P/E ratio, market cap and earnings dates
+- Provides 52‑week high/low data and other technical indicators
 
 ### 📈 Forecasting Dashboard
 - Built with [Facebook Prophet](https://facebook.github.io/prophet/)
