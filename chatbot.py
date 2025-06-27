@@ -12,7 +12,7 @@ api_key_path = os.path.join(current_directory, api_relative_path)
 MODEL_NAME = 'gpt-3.5-turbo-0125'
 
 with open(api_key_path, 'r') as f:
-    openai.api_key = f.read()
+    openai.api_key = f.read().strip()
 
 config_file_path = os.path.join(current_directory, functions_relative_path)
 with open(config_file_path, 'r') as file:
