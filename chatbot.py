@@ -2,20 +2,12 @@ import json
 import openai
 import streamlit as st
 from functions import *
-import os
-from dotenv import load_dotenv  # <-- NEW
 
-# Load environment variables from .env
-load_dotenv()
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-# Set the OpenAI key from env
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-# Use relative path to the functions config
 MODEL_NAME = 'gpt-3.5-turbo-0125'
 functions_relative_path = 'function_config.json'
 
-# Load function config JSON
 with open(functions_relative_path, 'r') as file:
     config_data = json.load(file)
 
