@@ -18,9 +18,11 @@ StockBot is a Python-based chatbot designed to provide quick and convenient info
 
 ## Running the app
 
-1. Install dependencies with `pip install -r requirements.txt`.
-2. Start the server using `uvicorn fastapi_app:app --reload`.
-3. Open `http://localhost:8000` in your browser to access the React interface.
+1. Create an `API_KEY` file containing your OpenAI API key. It can be either
+   just the key or in the form `OPENAI_API_KEY=<your_key>`.
+2. Install dependencies with `pip install -r requirements.txt`.
+3. Start the server using `uvicorn fastapi_app:app --reload`.
+4. Open `http://localhost:8000` in your browser to access the React interface.
 https://github.com/ravitiwari2002/StockBot/assets/81186121/df4240d7-bf9d-4ae7-b2de-af8ad59ff984
 
 
