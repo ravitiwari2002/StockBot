@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Forecast</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container" id="root"></div>
+<script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+<script>
+const e = React.createElement;
+function ForecastApp(){
+    const [symbol,setSymbol] = React.useState('');
+    const [years,setYears] = React.useState(1);
+    const [result,setResult] = React.useState(null);
+    const fetchForecast = async () => {
+        const resp = await fetch(`/api/forecast?symbol=${symbol}&years=${years}`);
+        const data = await resp.json();
+        setResult(data);
+    };
+    return e('div', null,
+        e('h2',{className:'title'},'Stock Prophet'),
+        e('input',{value:symbol,onChange:e=>setSymbol(e.target.value),placeholder:'Ticker'}),
+        e('input',{type:'number',value:years,onChange:e=>setYears(e.target.value),min:1,max:10}),
+        e('button',{onClick:fetchForecast},'Forecast'),
+        result ? e('pre', null, JSON.stringify(result, null, 2)) : null
+    );
+}
+ReactDOM.render(e(ForecastApp), document.getElementById('root'));
+</script>
+</body>
+</html>
