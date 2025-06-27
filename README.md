@@ -1,34 +1,58 @@
-# StockBot
+# 📊 StockBot – AI-Powered Stock Assistant
 
-StockBot is a Python-based chatbot designed to provide quick and convenient information on publicly traded stocks. Leveraging the OpenAI Chat API, StockBot interprets natural language queries and executes a set of predefined functions, allowing users to gain insights into various aspects of the stock market.
+**Live App** 👉 [Try StockBot on Streamlit](https://stockbot-k989z7myj2jxa6rm2icfer.streamlit.app)
 
-## Features
+---
 
-1. **get_stock_price**: Retrieve the current stock price for a specified company.
-2. **calculate_SMA**: Calculate the simple moving average for a given stock.
-3. **calculate_EMA**: Calculate the exponential moving average for a specified stock.
-4. **calculate_RSI**: Calculate the relative strength index for a particular stock.
-5. **calculate_MACD**: Calculate the moving average convergence divergence for a chosen stock.
-6. **plot_stock_price**: Generate a plot displaying the stock price trend over the last year.
-7. **compare_stock_prices**: Compare the stock prices of two companies over a specified period.
-8. **average_volume**: Obtain the average trading volume for a specific stock over the last month.
-9. **get_dividend_info**: Retrieve dividend information for a given stock.
-10. **get_stock_news**: Fetch the latest news headlines related to a particular stock.
-11. **calculate_daily_returns**: Get the daily return for a given stock.
+## 🚀 What is StockBot?
 
+StockBot is a dual-feature AI tool that combines:
 
+- 💬 **AI Chatbot** to answer stock-related queries in real-time using OpenAI
+- 📈 **Forecasting Dashboard** that predicts future stock trends using Prophet and historical data from yfinance
 
-https://github.com/ravitiwari2002/StockBot/assets/81186121/df4240d7-bf9d-4ae7-b2de-af8ad59ff984
+Built with Python, Streamlit, and OpenAI's function-calling capabilities, StockBot helps users interactively explore market data and insights in a clean, conversational interface.
 
+---
 
+## 🧠 Features
 
-## Note
+### 💬 Stock Chatbot
+- Real-time financial Q&A with OpenAI GPT
+- Uses custom Python functions via function-calling
+- Pulls live data via `yfinance`, with charts and news summaries
 
-StockBot may not cover all stocks, and the information provided may not be real-time. It's designed to offer quick insights based on historical and publicly available data.
+### 📈 Forecasting Dashboard
+- Built with [Facebook Prophet](https://facebook.github.io/prophet/)
+- Interactive inputs for stock symbol and prediction horizon
+- Forecast charts rendered using Plotly
 
-## Disclaimer
+---
 
-This project is for educational and informational purposes only. It does not constitute financial advice. Use the information provided by StockBot responsibly and consider consulting with a financial professional for personalized guidance.
+## 🔧 Technologies Used
+
+- [Streamlit](https://streamlit.io/)
+- [OpenAI GPT-3.5 Turbo](https://platform.openai.com/)
+- [yfinance](https://pypi.org/project/yfinance/)
+- [Prophet](https://facebook.github.io/prophet/)
+- [Plotly](https://plotly.com/)
+- Python, Pandas, NumPy
+
+---
+
+## 🖼 Preview
+
+| Chatbot | Forecasting |
+|--------|-------------|
+
+| ![image](https://github.com/user-attachments/assets/e5f4e22a-79f4-4b95-b14e-37c7a19a66cf) | ![Screenshot 2025-06-27 025931](https://github.com/user-attachments/assets/49fc1e70-6b1e-4700-b91e-4de02bbf949d)
+
+---
+
+## 📌 Try It Out
+
+▶️ **[Launch StockBot App](https://stockbot-k989z7myj2jxa6rm2icfer.streamlit.app)**
+
 
 ## License
 
