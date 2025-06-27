@@ -45,7 +45,7 @@ Built with Python, Streamlit, and OpenAI's function-calling capabilities, StockB
 | Chatbot | Forecasting |
 |--------|-------------|
 
-| ![image](https://github.com/user-attachments/assets/e5f4e22a-79f4-4b95-b14e-37c7a19a66cf) | ![Screenshot 2025-06-27 025931](https://github.com/user-attachments/assets/49fc1e70-6b1e-4700-b91e-4de02bbf949d)
+| ![image](https://github.com/user-attachments/assets/e5f4e22a-79f4-4b95-b14e-37c7a19a66cf) | ![Screenshot 2025-06-27 025931](https://github.com/user-attachments/assets/49fc1e70-6b1e-4700-b91e-4de02bbf949d) |
 
 ---
 
