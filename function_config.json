@@ -176,5 +176,61 @@
             },
             "required": ["ticker"]
         }
+    },
+    {
+        "name": "get_pe_ratio",
+        "description": "Get the trailing P/E ratio for a stock ticker.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "ticker": {
+                    "type": "string",
+                    "description": "The stock ticker symbol for a company (for example AAPL for Apple)."
+                }
+            },
+            "required": ["ticker"]
+        }
+    },
+    {
+        "name": "get_52_week_high_low",
+        "description": "Get the 52 week high and low prices for a stock ticker.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "ticker": {
+                    "type": "string",
+                    "description": "The stock ticker symbol for a company (for example AAPL for Apple)."
+                }
+            },
+            "required": ["ticker"]
+        }
+    },
+    {
+        "name": "get_market_cap",
+        "description": "Get the market capitalization for a stock ticker.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "ticker": {
+                    "type": "string",
+                    "description": "The stock ticker symbol for a company (for example AAPL for Apple)."
+                }
+            },
+            "required": ["ticker"]
+        }
+    },
+    {
+        "name": "get_next_earnings_date",
+        "description": "Get the next earnings date for a stock ticker if available.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "ticker": {
+                    "type": "string",
+                    "description": "The stock ticker symbol for a company (for example AAPL for Apple)."
+                }
+            },
+            "required": ["ticker"]
+        }
     }
 ]
