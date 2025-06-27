@@ -23,7 +23,11 @@ def run_chatbot():
         'average_volume': average_volume,
         'get_dividend_info': get_dividend_info,
         'get_stock_news': get_stock_news,
-        'calculate_daily_returns': calculate_daily_returns
+        'calculate_daily_returns': calculate_daily_returns,
+        'get_pe_ratio': get_pe_ratio,
+        'get_52_week_high_low': get_52_week_high_low,
+        'get_market_cap': get_market_cap,
+        'get_next_earnings_date': get_next_earnings_date
     }
 
     faq_questions = [

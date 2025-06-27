@@ -78,3 +78,31 @@ def calculate_daily_returns(ticker):
     data = yf.download(ticker, start=start, end=end, progress=False)
     data['Daily Return'] = data['Adj Close'].pct_change()
     return {k.strftime('%Y-%m-%d'): (v if pd.notnull(v) else "NaN") for k, v in data['Daily Return'].to_dict().items()}
+
+
+def get_pe_ratio(ticker):
+    """Return the trailing P/E ratio for the given ticker."""
+    info = yf.Ticker(ticker).info
+    return str(info.get('trailingPE'))
+
+
+def get_52_week_high_low(ticker):
+    """Return the 52 week high and low prices for the ticker."""
+    info = yf.Ticker(ticker).info
+    high = info.get('fiftyTwoWeekHigh')
+    low = info.get('fiftyTwoWeekLow')
+    return f"High: {high}, Low: {low}"
+
+
+def get_market_cap(ticker):
+    """Return the market capitalization for the ticker."""
+    info = yf.Ticker(ticker).info
+    return str(info.get('marketCap'))
+
+
+def get_next_earnings_date(ticker):
+    """Return the next earnings date for the ticker if available."""
+    info = yf.Ticker(ticker).calendar
+    if 'Earnings Date' in info.index and not info.empty:
+        return str(info.loc['Earnings Date'][0])
+    return 'N/A'
