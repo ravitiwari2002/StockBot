@@ -5,8 +5,7 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn main:app --bind 0.0.0.0:$PORT
     envVars:
-      - key: OPENAI_API_KEY
-        fromSecret: OPENAI_API_KEY
+      - fromGroup: stock-bot-env             # use the group you just made
 
   - type: web
     name: stock-bot-chatbot
@@ -14,8 +13,7 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: streamlit run chatbot.py --server.port $PORT --server.enableCORS false
     envVars:
-      - key: OPENAI_API_KEY
-        fromSecret: OPENAI_API_KEY
+      - fromGroup: stock-bot-env
 
   - type: web
     name: stock-bot-forecast
@@ -23,5 +21,4 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: streamlit run forecast.py --server.port $PORT --server.enableCORS false
     envVars:
-      - key: OPENAI_API_KEY
-        fromSecret: OPENAI_API_KEY
+      - fromGroup: stock-bot-env
