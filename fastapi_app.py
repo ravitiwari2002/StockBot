@@ -60,7 +60,7 @@ async def chat(request: Request):
     data = await request.json()
     user_message = data.get("message", "")
     messages = [{"role": "user", "content": user_message}]
-    response = openai.ChatCompletion.create(
+    response = openai.chat.completions.create(
         model=MODEL_NAME,
         messages=messages,
         functions=config_data,
@@ -76,7 +76,7 @@ async def chat(request: Request):
             result = fn(**args)
             messages.append(response_message)
             messages.append({"role": "function", "name": fn_name, "content": result})
-            second = openai.ChatCompletion.create(model=MODEL_NAME, messages=messages)
+            second = openai.chat.completions.create(model=MODEL_NAME, messages=messages)
             final_msg = second["choices"][0]["message"]["content"]
             return {"response": final_msg}
     return {"response": response_message.get("content", "")}
@@ -84,7 +84,9 @@ async def chat(request: Request):
 @app.get("/api/forecast")
 async def forecast(symbol: str, years: int = 1):
     data = yf.Ticker(symbol).history(period="max")
+    data.index = data.index.tz_localize(None)
     data = data.reset_index()[["Date", "Close"]]
+    data["Date"] = pd.to_datetime(data["Date"]).dt.tz_localize(None)
     data.rename(columns={"Date": "ds", "Close": "y"}, inplace=True)
     m = Prophet()
     m.fit(data)
