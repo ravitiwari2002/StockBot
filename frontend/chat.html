@@ -3,38 +3,545 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Chat</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>💬 Stock Chatbot Assistant</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        .chat-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            min-height: 600px;
+        }
+
+        .faq-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            height: fit-content;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e0e6ed;
+        }
+
+        .chat-header h2 {
+            color: #2a5298;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+            max-height: 400px;
+            padding-right: 0.5rem;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            animation: slideIn 0.3s ease-out;
+            max-width: 85%;
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot {
+            background: #f7f9fc;
+            border: 1px solid #e0e6ed;
+            color: #333;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-role {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+
+        .message-content {
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        #messageInput {
+            width: 100%;
+            min-height: 120px;
+            padding: 1rem;
+            border: 2px solid #e0e6ed;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            background: #f7f9fc;
+            transition: all 0.3s ease;
+        }
+
+        #messageInput:focus {
+            outline: none;
+            border-color: #2575fc;
+            box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.1);
+        }
+
+        .input-placeholder {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            color: #888;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .send-button:hover {
+            background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.3);
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .faq-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            color: #2a5298;
+        }
+
+        .faq-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .faq-item {
+            margin-bottom: 1rem;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .faq-question {
+            padding: 1rem;
+            background: #f8f9fa;
+            cursor: pointer;
+            font-weight: 600;
+            color: #2a5298;
+            transition: background 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question:hover {
+            background: #e9ecef;
+        }
+
+        .faq-answer {
+            padding: 1rem;
+            display: none;
+            background: white;
+            color: #666;
+            line-height: 1.6;
+            border-top: 1px solid #e0e6ed;
+        }
+
+        .faq-answer.open {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            color: #666;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e0e6ed;
+            border-top: 2px solid #2575fc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        .error {
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            color: #c62828;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 200px; }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .chat-section, .faq-section {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Custom scrollbar */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
 </head>
 <body>
-<div class="container" id="root"></div>
-<script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-<script>
-const e = React.createElement;
-function ChatApp() {
-    const [messages, setMessages] = React.useState([]);
-    const [input, setInput] = React.useState('');
-    const send = async () => {
-        if (!input) return;
-        const resp = await fetch('/api/chat', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({message: input})
+    <div class="main-container">
+        <!-- Chat Section -->
+        <div class="chat-section">
+            <div class="chat-header">
+                <i class="fas fa-comments" style="color: #2575fc; font-size: 1.5rem;"></i>
+                <h2>Stock Chatbot Assistant</h2>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be added here -->
+            </div>
+
+            <div class="input-section">
+                <div class="input-container">
+                    <textarea
+                        id="messageInput"
+                        placeholder="Ask me about stocks (e.g., 'What's the RSI of AAPL?')"
+                        rows="4"
+                    ></textarea>
+                </div>
+                <div class="button-container">
+                    <button class="send-button" id="sendButton">
+                        <i class="fas fa-paper-plane"></i> Send
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <div class="faq-header">
+                <i class="fas fa-question-circle" style="color: #2575fc; font-size: 1.5rem;"></i>
+                <h2>FAQs</h2>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    What can I ask the chatbot about?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Feel free to inquire about a wide range of stock-related information, including current stock prices, daily returns, technical indicators, comparisons of stock prices, average trading volume, dividend details, and the latest news.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    How do I interact with the chatbot?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Type your stock-related questions in the input box provided and press Send. The chatbot will respond with relevant information.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Can I get historical stock data using this chatbot?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Yes, you can ask for historical stock prices, moving averages, and other technical indicators over specific periods.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    What type of financial information does the chatbot provide?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    The chatbot provides a comprehensive overview of stock market data. It delivers real-time and historical prices, daily returns, technical indicators, comparative analysis, trading volume, dividend details, and the latest news.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Is the chatbot limited to a specific set of stocks?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    No, the chatbot can provide information on a wide range of stocks. You can inquire about any publicly traded company by specifying its stock ticker symbol.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    What are the limitations of the chatbot?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    The chatbot is designed to offer information on publicly traded stocks. However, please note that it might not have data for all stocks, and the information provided may not be real-time. Additionally, it may not cover every financial metric or event related to stocks. We recommend entering one query at a time for the best results.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class StockChatbot {
+            constructor() {
+                this.messages = [];
+                this.isLoading = false;
+                this.init();
+            }
+
+            init() {
+                this.messageInput = document.getElementById('messageInput');
+                this.sendButton = document.getElementById('sendButton');
+                this.chatMessages = document.getElementById('chatMessages');
+
+                // Event listeners
+                this.sendButton.addEventListener('click', () => this.sendMessage());
+                this.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                // Auto-resize textarea
+                this.messageInput.addEventListener('input', () => {
+                    this.messageInput.style.height = 'auto';
+                    this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 200) + 'px';
+                });
+
+                // Welcome message
+                this.addMessage('bot', 'Welcome to the Stock Chatbot Assistant! 👋 Ask me about stock prices, technical indicators, market news, and more. Try asking something like "What\'s the current price of AAPL?" or "Show me the RSI for TSLA".');
+            }
+
+            async sendMessage() {
+                const message = this.messageInput.value.trim();
+                if (!message || this.isLoading) return;
+
+                // Add user message
+                this.addMessage('user', message);
+                this.messageInput.value = '';
+                this.messageInput.style.height = 'auto';
+
+                // Show loading
+                this.setLoading(true);
+
+                try {
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: message })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Server error: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    // Add bot response
+                    this.addMessage('bot', data.response || 'Sorry, I couldn\'t process your request.');
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.addMessage('bot', '❌ Sorry, I encountered an error processing your request. Please try again or check your connection.', true);
+                } finally {
+                    this.setLoading(false);
+                }
+            }
+
+            addMessage(role, content, isError = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${role}`;
+
+                if (isError) {
+                    messageDiv.classList.add('error');
+                }
+
+                const roleDiv = document.createElement('div');
+                roleDiv.className = 'message-role';
+                roleDiv.textContent = role === 'user' ? '👤 You' : '🤖 Assistant';
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                contentDiv.textContent = content;
+
+                messageDiv.appendChild(roleDiv);
+                messageDiv.appendChild(contentDiv);
+
+                this.chatMessages.appendChild(messageDiv);
+                this.scrollToBottom();
+
+                // Store message
+                this.messages.push({ role, content });
+            }
+
+            setLoading(loading) {
+                this.isLoading = loading;
+                this.sendButton.disabled = loading;
+
+                if (loading) {
+                    // Add loading message
+                    const loadingDiv = document.createElement('div');
+                    loadingDiv.className = 'loading';
+                    loadingDiv.id = 'loadingMessage';
+                    loadingDiv.innerHTML = '<div class="spinner"></div>Assistant is thinking...';
+                    this.chatMessages.appendChild(loadingDiv);
+                    this.scrollToBottom();
+                } else {
+                    // Remove loading message
+                    const loadingMessage = document.getElementById('loadingMessage');
+                    if (loadingMessage) {
+                        loadingMessage.remove();
+                    }
+                }
+            }
+
+            scrollToBottom() {
+                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+            }
+        }
+
+        // FAQ functionality
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('i');
+
+            // Close all other FAQs
+            document.querySelectorAll('.faq-answer').forEach(faq => {
+                if (faq !== answer) {
+                    faq.classList.remove('open');
+                    faq.previousElementSibling.querySelector('i').style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // Toggle current FAQ
+            answer.classList.toggle('open');
+            icon.style.transform = answer.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        // Initialize chatbot when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new StockChatbot();
         });
-        const data = await resp.json();
-        setMessages([...messages, {role:'user',content:input}, {role:'bot',content:data.response}]);
-        setInput('');
-    };
-    return e('div', null,
-        e('h2', {className:'title'}, 'Stock Chatbot'),
-        messages.map((m,i)=>e('div',{key:i}, `${m.role}: ${m.content}`)),
-        e('textarea',{value:input,onChange:e=>setInput(e.target.value),rows:4,cols:50}),
-        e('br'),
-        e('button',{onClick:send},'Send')
-    );
-}
-ReactDOM.render(e(ChatApp), document.getElementById('root'));
-</script>
+    </script>
 </body>
 </html>
