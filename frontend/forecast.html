@@ -3,33 +3,686 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Forecast</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Stock Prophet - AI Forecasting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1e1e1e;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .title-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .title-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, #00CC66, #FF6600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            position: relative;
+            z-index: 1;
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-input, .form-select {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #ffffff;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #00CC66;
+            box-shadow: 0 0 0 3px rgba(0, 204, 102, 0.1);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #00CC66;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #00CC66, #FF6600);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 32px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            margin-top: 16px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .metric-change {
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .positive { color: #00FF88; }
+        .negative { color: #FF4444; }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #00CC66;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            color: #FF4444;
+            margin: 16px 0;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .insight-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .insight-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #00CC66;
+        }
+
+        .insight-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: rgba(255, 255, 255, 0.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 32px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="container" id="root"></div>
-<script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-<script>
-const e = React.createElement;
-function ForecastApp(){
-    const [symbol,setSymbol] = React.useState('');
-    const [years,setYears] = React.useState(1);
-    const [result,setResult] = React.useState(null);
-    const fetchForecast = async () => {
-        const resp = await fetch(`/api/forecast?symbol=${symbol}&years=${years}`);
-        const data = await resp.json();
-        setResult(data);
-    };
-    return e('div', null,
-        e('h2',{className:'title'},'Stock Prophet'),
-        e('input',{value:symbol,onChange:e=>setSymbol(e.target.value),placeholder:'Ticker'}),
-        e('input',{type:'number',value:years,onChange:e=>setYears(e.target.value),min:1,max:10}),
-        e('button',{onClick:fetchForecast},'Forecast'),
-        result ? e('pre', null, JSON.stringify(result, null, 2)) : null
-    );
-}
-ReactDOM.render(e(ForecastApp), document.getElementById('root'));
-</script>
+    <div id="root"></div>
+
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+    <script>
+        const { useState, useEffect } = React;
+        const e = React.createElement;
+
+        // Popular stocks by category
+        const stockCategories = {
+            "🏢 Tech Giants": ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "TSLA", "NVDA", "NFLX"],
+            "💰 Finance": ["JPM", "BAC", "WFC", "GS", "MS", "C", "USB", "PNC"],
+            "🏭 Industrial": ["GE", "BA", "CAT", "MMM", "HON", "UPS", "FDX", "LMT"],
+            "🏥 Healthcare": ["JNJ", "PFE", "UNH", "ABBV", "MRK", "TMO", "ABT", "DHR"],
+            "🛒 Consumer": ["PG", "KO", "PEP", "WMT", "HD", "MCD", "NKE", "SBUX"],
+        };
+
+        const allStocks = Object.values(stockCategories).flat();
+
+        function StockForecastApp() {
+            const [symbol, setSymbol] = useState('AAPL');
+            const [years, setYears] = useState(2);
+            const [dataColumn, setDataColumn] = useState('Close');
+            const [indicators, setIndicators] = useState({
+                movingAverages: true,
+                rsi: false,
+                macd: true,
+                volume: true,
+                bollinger: false
+            });
+            const [result, setResult] = useState(null);
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState(null);
+
+            const handleIndicatorChange = (indicator) => {
+                setIndicators(prev => ({
+                    ...prev,
+                    [indicator]: !prev[indicator]
+                }));
+            };
+
+            const fetchForecast = async () => {
+                if (!symbol.trim()) {
+                    setError('Please enter a stock symbol');
+                    return;
+                }
+
+                setLoading(true);
+                setError(null);
+
+                try {
+                    const response = await fetch(`/api/forecast?symbol=${symbol}&years=${years}&column=${dataColumn}`);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    setResult(data);
+
+                    // Create charts after data is set
+                    setTimeout(() => {
+                        createMainChart(data);
+                        createForecastChart(data);
+                    }, 100);
+
+                } catch (err) {
+                    setError(err.message || 'Failed to fetch forecast data');
+                    console.error('Forecast error:', err);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const createMainChart = (data) => {
+                if (!data.historical_data || data.historical_data.length === 0) return;
+
+                const traces = [];
+                const historicalData = data.historical_data;
+
+                // Candlestick chart
+                traces.push({
+                    type: 'candlestick',
+                    x: historicalData.map(d => d.Date),
+                    open: historicalData.map(d => d.Open),
+                    high: historicalData.map(d => d.High),
+                    low: historicalData.map(d => d.Low),
+                    close: historicalData.map(d => d.Close),
+                    name: 'Price',
+                    increasing: { line: { color: '#00FF88' } },
+                    decreasing: { line: { color: '#FF4444' } }
+                });
+
+                // Moving averages
+                if (indicators.movingAverages) {
+                    ['MA_20', 'MA_50', 'MA_200'].forEach((ma, idx) => {
+                        const colors = ['#FFA500', '#00FF88', '#FF4444'];
+                        traces.push({
+                            type: 'scatter',
+                            mode: 'lines',
+                            x: historicalData.map(d => d.Date),
+                            y: historicalData.map(d => d[ma]),
+                            name: ma,
+                            line: { color: colors[idx], width: 1.5 }
+                        });
+                    });
+                }
+
+                const layout = {
+                    template: 'plotly_dark',
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    title: {
+                        text: `${symbol} Stock Analysis`,
+                        font: { color: '#ffffff', size: 18 }
+                    },
+                    xaxis: {
+                        title: 'Date',
+                        gridcolor: 'rgba(255,255,255,0.1)',
+                        color: '#ffffff'
+                    },
+                    yaxis: {
+                        title: 'Price ($)',
+                        gridcolor: 'rgba(255,255,255,0.1)',
+                        color: '#ffffff'
+                    },
+                    legend: {
+                        orientation: 'h',
+                        y: 1.02,
+                        x: 1,
+                        xanchor: 'right'
+                    },
+                    margin: { t: 60, b: 40, l: 40, r: 40 }
+                };
+
+                Plotly.newPlot('main-chart', traces, layout, { responsive: true });
+            };
+
+            const createForecastChart = (data) => {
+                if (!data.forecast_data || data.forecast_data.length === 0) return;
+
+                const historical = data.historical_data || [];
+                const forecast = data.forecast_data || [];
+
+                const traces = [
+                    {
+                        type: 'scatter',
+                        mode: 'lines',
+                        x: historical.map(d => d.Date),
+                        y: historical.map(d => d.Close),
+                        name: 'Historical',
+                        line: { color: '#00FF88', width: 2 }
+                    },
+                    {
+                        type: 'scatter',
+                        mode: 'lines',
+                        x: forecast.map(d => d.ds),
+                        y: forecast.map(d => d.yhat),
+                        name: 'Forecast',
+                        line: { color: '#FFA500', width: 2, dash: 'dash' }
+                    },
+                    {
+                        type: 'scatter',
+                        mode: 'lines',
+                        x: forecast.map(d => d.ds),
+                        y: forecast.map(d => d.yhat_upper),
+                        name: 'Upper Bound',
+                        line: { color: 'rgba(255,0,0,0.2)' },
+                        showlegend: false
+                    },
+                    {
+                        type: 'scatter',
+                        mode: 'lines',
+                        x: forecast.map(d => d.ds),
+                        y: forecast.map(d => d.yhat_lower),
+                        name: 'Lower Bound',
+                        line: { color: 'rgba(255,0,0,0.2)' },
+                        fill: 'tonexty',
+                        fillcolor: 'rgba(255,0,0,0.1)',
+                        showlegend: false
+                    }
+                ];
+
+                const layout = {
+                    template: 'plotly_dark',
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    title: {
+                        text: `${symbol} Price Forecast - Next ${years} Years`,
+                        font: { color: '#ffffff', size: 18 }
+                    },
+                    xaxis: {
+                        title: 'Date',
+                        gridcolor: 'rgba(255,255,255,0.1)',
+                        color: '#ffffff'
+                    },
+                    yaxis: {
+                        title: 'Price ($)',
+                        gridcolor: 'rgba(255,255,255,0.1)',
+                        color: '#ffffff'
+                    },
+                    legend: {
+                        orientation: 'h',
+                        y: 1.02,
+                        x: 1,
+                        xanchor: 'right'
+                    },
+                    margin: { t: 60, b: 40, l: 40, r: 40 }
+                };
+
+                Plotly.newPlot('forecast-chart', traces, layout, { responsive: true });
+            };
+
+            const formatCurrency = (value) => {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(value);
+            };
+
+            const formatPercent = (value) => {
+                return `${value > 0 ? '+' : ''}${value.toFixed(2)}%`;
+            };
+
+            return e('div', { className: 'container' }, [
+                // Title section
+                e('div', { key: 'title', className: 'title-container' }, [
+                    e('h1', { className: 'title' }, '📈 Stock Prophet'),
+                    e('p', { className: 'subtitle' }, 'AI-Powered Stock Forecasting & Technical Analysis')
+                ]),
+
+                // Control panel
+                e('div', { key: 'controls', className: 'control-panel' }, [
+                    e('div', { className: 'controls-grid' }, [
+                        e('div', { key: 'symbol', className: 'form-group' }, [
+                            e('label', { className: 'form-label' }, '🎯 Stock Symbol'),
+                            e('select', {
+                                className: 'form-select',
+                                value: symbol,
+                                onChange: (ev) => setSymbol(ev.target.value)
+                            }, allStocks.map(stock =>
+                                e('option', { key: stock, value: stock }, stock)
+                            ))
+                        ]),
+
+                        e('div', { key: 'years', className: 'form-group' }, [
+                            e('label', { className: 'form-label' }, '📅 Forecast Period (Years)'),
+                            e('input', {
+                                className: 'form-input',
+                                type: 'number',
+                                min: 1,
+                                max: 10,
+                                value: years,
+                                onChange: (ev) => setYears(parseInt(ev.target.value))
+                            })
+                        ]),
+
+                        e('div', { key: 'column', className: 'form-group' }, [
+                            e('label', { className: 'form-label' }, '📊 Price Data'),
+                            e('select', {
+                                className: 'form-select',
+                                value: dataColumn,
+                                onChange: (ev) => setDataColumn(ev.target.value)
+                            }, ['Close', 'Open', 'High', 'Low'].map(col =>
+                                e('option', { key: col, value: col }, col)
+                            ))
+                        ])
+                    ]),
+
+                    e('div', { className: 'checkbox-group' }, [
+                        { key: 'movingAverages', label: 'Moving Averages', value: indicators.movingAverages },
+                        { key: 'rsi', label: 'RSI Indicator', value: indicators.rsi },
+                        { key: 'macd', label: 'MACD Indicator', value: indicators.macd },
+                        { key: 'volume', label: 'Volume Analysis', value: indicators.volume },
+                        { key: 'bollinger', label: 'Bollinger Bands', value: indicators.bollinger }
+                    ].map(item =>
+                        e('div', { key: item.key, className: 'checkbox-item' }, [
+                            e('input', {
+                                type: 'checkbox',
+                                checked: item.value,
+                                onChange: () => handleIndicatorChange(item.key)
+                            }),
+                            e('label', null, item.label)
+                        ])
+                    )),
+
+                    e('button', {
+                        className: 'btn-primary',
+                        onClick: fetchForecast,
+                        disabled: loading
+                    }, loading ? 'Analyzing...' : '🔮 Generate Forecast')
+                ]),
+
+                // Error display
+                error && e('div', { key: 'error', className: 'error' }, `❌ ${error}`),
+
+                // Loading state
+                loading && e('div', { key: 'loading', className: 'loading' }, [
+                    e('div', { className: 'spinner' }),
+                    e('span', null, '🤖 Generating AI forecast...')
+                ]),
+
+                // Results section
+                result && !loading && [
+                    // Metrics
+                    result.metrics && e('div', { key: 'metrics', className: 'metrics-grid' }, [
+                        e('div', { key: 'current', className: 'metric-card' }, [
+                            e('div', { className: 'metric-value' }, formatCurrency(result.metrics.current_price || 0)),
+                            e('div', { className: 'metric-label' }, `💲 Current ${dataColumn}`),
+                            result.metrics.price_change && e('div', {
+                                className: `metric-change ${result.metrics.price_change >= 0 ? 'positive' : 'negative'}`
+                            }, formatPercent(result.metrics.price_change))
+                        ]),
+
+                        e('div', { key: 'forecast', className: 'metric-card' }, [
+                            e('div', { className: 'metric-value' }, formatCurrency(result.metrics.predicted_price || 0)),
+                            e('div', { className: 'metric-label' }, `🔮 Predicted Price (${years}Y)`),
+                            result.metrics.forecast_change && e('div', {
+                                className: `metric-change ${result.metrics.forecast_change >= 0 ? 'positive' : 'negative'}`
+                            }, formatPercent(result.metrics.forecast_change))
+                        ]),
+
+                        e('div', { key: 'confidence', className: 'metric-card' }, [
+                            e('div', { className: 'metric-value' }, `${(result.metrics.confidence || 0).toFixed(1)}%`),
+                            e('div', { className: 'metric-label' }, '📊 Confidence Level')
+                        ]),
+
+                        e('div', { key: 'trend', className: 'metric-card' }, [
+                            e('div', { className: 'metric-value' }, result.metrics.trend_direction || 'Neutral'),
+                            e('div', { className: 'metric-label' }, '📈 Trend Direction')
+                        ])
+                    ]),
+
+                    // Main chart
+                    e('div', { key: 'main-chart-container', className: 'chart-container' }, [
+                        e('h3', { className: 'chart-title' }, '📈 Stock Price & Technical Indicators'),
+                        e('div', { id: 'main-chart', style: { height: '500px' } })
+                    ]),
+
+                    // Forecast chart
+                    e('div', { key: 'forecast-chart-container', className: 'chart-container' }, [
+                        e('h3', { className: 'chart-title' }, '🔮 AI Forecast Analysis'),
+                        e('div', { id: 'forecast-chart', style: { height: '500px' } })
+                    ]),
+
+                    // Insights
+                    e('div', { key: 'insights', className: 'insights-grid' }, [
+                        e('div', { key: 'technical', className: 'insight-card' }, [
+                            e('h3', { className: 'insight-title' }, '📊 Technical Analysis'),
+                            e('div', { className: 'insight-text' },
+                                'Moving averages reveal trend direction. RSI shows overbought/oversold zones (70/30). MACD histogram highlights momentum shifts. Volume bars confirm price moves.'
+                            )
+                        ]),
+
+                        e('div', { key: 'ai', className: 'insight-card' }, [
+                            e('h3', { className: 'insight-title' }, '🔮 AI Forecast'),
+                            e('div', { className: 'insight-text' },
+                                'Prophet model captures trend & seasonality patterns. Confidence bands gauge prediction uncertainty. Use interactive charts to zoom in on any date range.'
+                            )
+                        ])
+                    ])
+                ],
+
+                // Footer
+                e('div', { key: 'footer', className: 'footer' }, [
+                    e('div', null, '📈 Stock Prophet — AI-Powered Financial Analysis'),
+                    e('div', null, '⚠️ This is for educational purposes only. Not financial advice. Always do your own research.')
+                ])
+            ]);
+        }
+
+        ReactDOM.render(e(StockForecastApp), document.getElementById('root'));
+    </script>
 </body>
 </html>
